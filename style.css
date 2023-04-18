@@ -1,0 +1,416 @@
+:root{
+    --bg-color: radial-gradient(ellipse at center top,hsl(214, 47%, 23%),hsl(237, 49%, 15%));
+    --noHandbg:hsla(237, 49%, 15%,0.5);
+    --score-text:hsl(229, 25%, 31%);
+    --score-text-label:hsl(229, 64%, 46%);
+    --header-outline:hsl(217, 16%, 45%);
+    --paper-color: linear-gradient(hsl(230, 89%, 65%),hsl(230, 89%, 62%));
+    --scissors-color: linear-gradient(hsl(40, 84%, 53%),hsl(39, 89%, 49%));
+    --rock-color: linear-gradient(hsl(349, 70%, 56%),hsl(349, 71%, 52%));
+    --clickplayagain:hsl(349, 71%, 52%);
+    --font-fam: 'Barlow Semi Condensed', sans-serif;
+}
+*{
+    margin: 0;
+    padding:0;
+    font-family: var(--font-fam);
+    text-transform: uppercase;
+}
+
+body{
+    background-image:var(--bg-color);
+    height: 100vh;
+    overflow: hidden;
+    display: grid;
+    place-content: center;
+}
+
+#header{
+    display: flex;
+    align-items: center;
+    position: fixed;
+    width: 80%;
+    left: 50%;
+    padding: 10px;
+    border: solid 2px var(--header-outline);
+    border-radius: 10px;
+    transform: translate(-50%,20%);
+    z-index: 9;
+}
+
+.logo{
+    height: 60px;
+    margin-left: 10px;
+}
+
+#scoreContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    height: 80px;
+    width: 80px;
+    padding: 5px 5px 5px 5px;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.scoreText{
+    color: var(--score-text-label);
+}
+
+#score{
+    font-size: 2.5rem;
+    color: var(--score-text);
+}
+
+#pickHandScreen.hidden{
+    visibility: hidden;
+    opacity: 0;
+}
+
+#pickHandScreen{
+    visibility: visible;
+    opacity: 100%;
+    transition: 0.1s;
+    position: relative;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    transition: 0.5s;
+}
+
+#paper,#rock,#scissors,#player,#computer{
+    height: 120px;
+    width: 120px;
+    z-index: 5;
+    border-radius: 100px;
+    background-color: var(--noHandbg);
+}
+
+#paper{
+    position: relative;
+    transform: translate(-90%,-5%);
+}
+
+#scissors{
+    position: relative;
+    transform: translate(90%,-105%);
+}
+
+#rock{
+    position: relative;
+    transform: translate(0,-20%);
+}
+
+.paper,.scissors,.rock{
+    height: 90%;
+    width: 90%;
+    border-radius: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.paper::before,.scissors::before,.rock::before{
+    content: ' ';
+    height: 75%;
+    width: 75%;
+    background-color: white;
+    box-shadow: inset 0px 5px 0px 0px hsl(0, 0%, 80%);
+    display: block;
+    border-radius: 100px;
+}
+.paper{
+    background-image: var(--paper-color);
+    box-shadow: 0px 5px 0px 0px hsl(230, 68%, 56%);
+}
+
+.paper::before{
+    background-image: url(images/icon-paper.svg);
+    background-size: 45%, 45%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.scissors{
+    background-image: var(--scissors-color);
+    box-shadow: 0px 5px 0px 0px hsl(40, 69%, 42%);
+}
+
+.scissors::before{
+    background-image: url(images/icon-scissors.svg);
+    background-size: 45%, 45%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.rock{
+    background-image: var(--rock-color);
+    box-shadow: 0px 5px 0px 0px hsl(349, 54%, 41%);
+}
+
+.rock::before{
+    background-image: url(images/icon-rock.svg);
+    background-size: 45%, 45%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#pickBG{
+    position: absolute;
+    top:45%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    max-width: 250px;
+    z-index: 0;
+}
+
+#playingScreen.active{
+    visibility: visible;
+    opacity: 1;
+}
+
+#playingScreen{
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.player{
+    position: absolute;
+    width: 100px;
+    transform: translate(-145%,500%);
+    color: white;
+    z-index: 50;
+}
+
+.computer{
+    position: absolute;
+    width: 140px;
+    transform: translate(30%,500%);
+    color: white;
+    z-index: 50;
+}
+
+#playingScreen,#player,#computer{
+    position: absolute;
+    left: 50%;
+    top: 35%;
+    transform: translate(-50%,-50%);
+    display: flex;
+}
+
+#playingScreen.active>#player,#playingScreen.active>#computer{
+    animation: handanimation 1s 3;
+}
+
+#player{
+    left: 0;
+    transform: translate(-140%,-50%);
+}
+
+#computer{
+    left: 0;
+    transform: translate(40%,-50%); 
+}
+
+#player.win,#computer.win{
+    box-shadow: 0px 0px 0px 10px rgb(255, 255, 255,0.1),
+    0px 0px 0px 30px rgb(255, 255, 255,0.1),
+    0px 0px 0px 60px rgb(255, 255, 255,0.1);
+} 
+
+@keyframes handanimation {
+    50%{
+        box-shadow: 0px 0px 0px 10px rgb(255, 255, 255,0.1),
+                0px 0px 0px 30px rgb(255, 255, 255,0.1),
+                0px 0px 0px 60px rgb(255, 255, 255,0.1);
+    }
+}
+#gameEndScreen{
+    visibility: hidden;
+    opacity: 0;
+    display: grid;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+    width:100%;
+    position: absolute;
+    top:60%;
+    left: 50%;
+    transform: translate(-50%,0%);
+    transition: 0.5s;
+    
+}
+
+#evaluation{
+    font-size: 4rem;
+    font-weight: 700;
+    color: white;
+}
+
+#playAgain{
+    font-size: 1rem;
+    padding: 10px;
+    color: var(--score-text);
+    border-radius: 10px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+#playAgain:hover{
+    color: var(--clickplayagain);
+}
+#gameEndScreen.active{
+   visibility: visible;
+   opacity: 100%;
+   
+}
+
+#rulesButton{
+    position: fixed;
+    top:85%;
+    left:50%;
+    transform: translate(-50%);
+    padding:10px 30px;
+    border-radius: 10px;
+    color:white;
+    background-color: transparent;
+    border: solid 2px var(--header-outline);
+    font-size: 1rem;
+}
+
+#rules{
+    position: absolute;
+    height: 100vh;
+    width: 100%;
+    display: grid;
+    place-content: center;
+    z-index: 9;
+    background-color: white;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+#rules.active{
+    visibility: visible;
+    opacity: 100%;
+}
+
+#closeRules{
+    position: absolute;
+    top: 85%;
+    left: 50%;
+    transform: translate(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    max-width: 30px;
+    padding: 2px;
+}
+
+#closeRules > div{
+    height: 5px;
+    width: 100%;
+    background-color: var(--header-outline);
+}
+
+.line1{
+    position: relative;
+    transform: rotate(45deg);
+    top: 3px;
+}
+
+.line2{
+    position: relative;
+    transform: rotate(-45deg);
+    top: -2px;
+}
+
+@media only screen and (max-width:300px){
+    #header{
+        width: 70%;
+    }
+    #paper{
+        transform: translate(-50%,30%);
+    }
+    
+    .computer{
+        transform: translate(5%,500%);
+    }
+
+    .player{
+        transform: translate(-90%,500%);
+    }
+
+    #scissors{
+        transform: translate(60%,-70%);
+    }
+    
+    #rock{
+        transform: translate(0,-70%);
+    }
+    #player{
+        left: 0;
+        transform: translate(-100%,-50%);
+    }
+    #computer{
+        left: 0;
+        transform: translate(20%,-50%);
+    }
+}
+@media only screen and (max-height:700px){
+    #paper{
+        transform: translate(-50%,30%);
+    }
+    
+    #scissors{
+        transform: translate(60%,-70%);
+    }
+    
+    #rock{
+        transform: translate(0,-70%);
+    }
+}
+
+@media only screen and (min-width:400px) {
+    #header{
+        width: 40%;
+    }
+
+    #pickBG{
+        top:55%
+    }
+
+    #paper{
+        transform: translate(-90%,30%);
+    }
+    
+    #scissors{
+        transform: translate(90%,-70%);
+    }
+    
+    #rock{
+        transform: translate(0,-30%);
+    }
+    #rulesButton{
+        left: 95%;
+        transform: translate(-95%);
+    }
+    /* #player{
+        transform: translate(-500%,-50%);
+        transform: scale(150%);
+    }
+    
+    #computer{
+        transform: translate(100%,-50%); 
+        /* transform: scale(150%); */
+    } */
+}
